@@ -1,5 +1,7 @@
 package ru.anastasiakype;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.CoreMatchers;
@@ -17,26 +19,21 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
+@Feature("Создали токен для бронирования")
+@Story("Тестируем создание токена")
+public class createTokenTests extends BaseTest {
 
-public class createTokenTests {
-
-
-    private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
     private static CreateTokenRequest request;
-    static Properties properties = new Properties();
-    static private String baseUrl;
 
     @BeforeAll
     static void beforeAll() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
+
         request = CreateTokenRequest.builder()
                 .username("admin")
                 .password("password123")
                 .build();
-
-        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
-        RestAssured.baseURI = properties.getProperty("base.url");
     }
 
     @Test

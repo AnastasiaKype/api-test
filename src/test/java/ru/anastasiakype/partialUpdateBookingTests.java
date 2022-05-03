@@ -22,12 +22,11 @@ import static org.hamcrest.core.Is.is;
 import static ru.anastasiakype.deleteBookingTests.faker;
 import static ru.anastasiakype.deleteBookingTests.formater;
 
-public class partialUpdateBookingTests {
+public class partialUpdateBookingTests extends BaseTest {
     static String token;
     String id;
-    private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
+
     private static CreateTokenRequest request;
-    static Properties properties = new Properties();
     private static createAccountRequest accountRequest;
     private static BookingdatesRequest bookingdatesRequest;
 
@@ -38,8 +37,6 @@ public class partialUpdateBookingTests {
                 .password("password123")
                 .build();
 
-        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
-        RestAssured.baseURI = properties.getProperty("base.url");
 
         bookingdatesRequest = BookingdatesRequest.builder()
                 .checkin(formater.format(faker.date().birthday().getDate()))

@@ -1,5 +1,9 @@
 package ru.anastasiakype;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,12 +25,13 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 
+@Severity(SeverityLevel.BLOCKER)
+@Story("Удалили бронирование")
+@Feature("Тестируем удаленние бронирования")
+
+public class deleteBookingTests extends BaseTest{
 
 
-public class deleteBookingTests {
-
-    private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
-    static Properties properties = new Properties();
     private static CreateTokenRequest request;
     private static createAccountRequest accountRequest;
     private static BookingdatesRequest bookingdatesRequest;
@@ -40,10 +45,6 @@ public class deleteBookingTests {
     String id;
     @BeforeAll
     static void beforeAll() throws IOException {
-
-        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
-        RestAssured.baseURI = properties.getProperty("base.url");
-
 
 
         request = CreateTokenRequest.builder()
