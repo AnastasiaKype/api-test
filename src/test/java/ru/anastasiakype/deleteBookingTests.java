@@ -1,33 +1,82 @@
 package ru.anastasiakype;
 
+import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.anastasiakype.dao.BookingdatesRequest;
+import ru.anastasiakype.dao.CreateTokenRequest;
+import ru.anastasiakype.dao.createAccountRequest;
+import com.github.javafaker.Faker;
+
+import java.io.FileInputStream;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 
+
+
 public class deleteBookingTests {
+
+    private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
+    static Properties properties = new Properties();
+    private static CreateTokenRequest request;
+    private static createAccountRequest accountRequest;
+    private static BookingdatesRequest bookingdatesRequest;
+    static Faker faker = new Faker();
+
+
+
+    static SimpleDateFormat formater = new SimpleDateFormat("dd-MM-yyyy");
 
     static String token;
     String id;
     @BeforeAll
-    static void beforeAll() {
-        token = given()//предусловия, подготовка
+    static void beforeAll() throws IOException {
+
+        properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
+        RestAssured.baseURI = properties.getProperty("base.url");
+
+
+
+        request = CreateTokenRequest.builder()
+                    .username("admin")
+                    .password("password123")
+                    .build();
+
+        bookingdatesRequest = BookingdatesRequest.builder()
+                .checkin(formater.format(faker.date().birthday().getDate()))
+                .checkout(formater.format(faker.date().birthday().getDate()))
+                .build();
+        accountRequest = createAccountRequest.builder()
+                .firstname(faker.name().fullName())
+                .lastname(faker.name().lastName())
+                .totalprice(faker.hashCode())
+                .depositpaid(true)
+                .bookingdates(bookingdatesRequest)
+                .additionalneeds(faker.chuckNorris().fact())
+                .build();
+
+
+
+
+        token = given()
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
-                .body("{\n"
-                        + "    \"username\" : \"admin\",\n"
-                        + "    \"password\" : \"password123\"\n"
-                        + "}")
+                .body(request)
                 .expect()
                 .statusCode(200)
                 .body("token", is(CoreMatchers.not(nullValue())))
                 .when()
-                .post("https://restful-booker.herokuapp.com/auth")//шаг(и)
+                .post("/auth")
                 .prettyPeek()
                 .body()
                 .jsonPath()
@@ -42,21 +91,11 @@ public class deleteBookingTests {
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
-                .body("{\n"
-                        + "    \"firstname\" : \"Jim\",\n"
-                        + "    \"lastname\" : \"Brown\",\n"
-                        + "    \"totalprice\" : 111,\n"
-                        + "    \"depositpaid\" : true,\n"
-                        + "    \"bookingdates\" : {\n"
-                        + "        \"checkin\" : \"2018-01-01\",\n"
-                        + "        \"checkout\" : \"2019-01-01\"\n"
-                        + "    },\n"
-                        + "    \"additionalneeds\" : \"Breakfast\"\n"
-                        + "}")
+                .body(accountRequest)
                 .expect()
                 .statusCode(200)
                 .when()
-                .post("https://restful-booker.herokuapp.com/booking")
+                .post("/booking")
                 .prettyPeek()
                 .body()
                 .jsonPath()
@@ -71,7 +110,7 @@ public class deleteBookingTests {
                 .all()
                 .header("Cookie", "token=" + token)
                 .when()
-                .delete("https://restful-booker.herokuapp.com/booking/" + id)
+                .delete("/booking/" + id)
                 .prettyPeek()
                 .then()
                 .statusCode(201);
@@ -84,7 +123,7 @@ public class deleteBookingTests {
                 .all()
                 .header("Cookie", "token=" + token + 1)
                 .when()
-                .delete("https://restful-booker.herokuapp.com/booking/" + id)
+                .delete("/booking/" + id)
                 .prettyPeek()
                 .then()
                 .statusCode(403);
@@ -94,14 +133,10 @@ public class deleteBookingTests {
     void deleteBookingAuthorizationPositiveTest() {
         given()
                 .log()
-                .method()
-                .log()
-                .uri()
-                .log()
-                .body()
-                .header("Authorization", "Basic 58f230c78db51ef")
+                .all()
+                .header("Authorization", "Basic b3b8e87abd2cf25")
                 .when()
-                .delete("https://restful-booker.herokuapp.com/booking/" + id)
+                .delete("/booking/" + id)
                 .prettyPeek()
                 .then()
                 .statusCode(403);
