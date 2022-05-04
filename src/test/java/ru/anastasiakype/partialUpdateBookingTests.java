@@ -1,13 +1,17 @@
 package ru.anastasiakype;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.anastasiakype.dao.BookingdatesRequest;
 import ru.anastasiakype.dao.CreateTokenRequest;
+import ru.anastasiakype.dao.CreateTokenResponse;
 import ru.anastasiakype.dao.createAccountRequest;
 
 import java.io.FileInputStream;
@@ -17,6 +21,7 @@ import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static ru.anastasiakype.deleteBookingTests.faker;
@@ -27,11 +32,16 @@ public class partialUpdateBookingTests extends BaseTest {
     String id;
 
     private static CreateTokenRequest request;
+    private static CreateTokenResponse tokenResponse;
     private static createAccountRequest accountRequest;
     private static BookingdatesRequest bookingdatesRequest;
+    private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
+
 
     @BeforeAll
     static void beforeAll() throws IOException {
+
+        RestAssured.baseURI = properties.getProperty("base.url");
         request = CreateTokenRequest.builder()
                 .username("admin")
                 .password("password123")
@@ -51,21 +61,21 @@ public class partialUpdateBookingTests extends BaseTest {
                 .additionalneeds(faker.chuckNorris().fact())
                 .build();
 
-        token = given()
+        tokenResponse = given()
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
                 .body(request)
                 .expect()
                 .statusCode(200)
-                .body("token", is(CoreMatchers.not(nullValue())))
                 .when()
-                .post("/auth")//шаг(и)
+                .post("auth")
                 .prettyPeek()
-                .body()
-                .jsonPath()
-                .get("token")
-                .toString();
+                .then()
+                .extract()
+                .as(CreateTokenResponse.class);
+
+        assertThat(tokenResponse.getToken().length(), IsEqual.equalTo(15));
     }
 
     @BeforeEach
@@ -105,6 +115,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - позитив")
+    @Step("Изменили данные регистрации")
     void updateBookingPositiveTest() {
         given()
                 .log()
@@ -123,6 +135,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - позитив")
+    @Step("Изменили данные имени")
     void updateBookingFirstnamePositiveTest() {
         given()
                 .log()
@@ -139,6 +153,8 @@ public class partialUpdateBookingTests extends BaseTest {
                 .body("firstname", equalTo("ava"));
     }
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные имени")
     void updateBookingFirstnameNegativeTest() {  //дает поставить числовое значение в имя
         given()
                 .log()
@@ -157,6 +173,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - позитив")
+    @Step("Изменили данные фамилии")
     void updateBookingLastnamePositiveTest() {
         given()
                 .log()
@@ -174,6 +192,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные фамилии на цифры")
     void updateBookingLastnameNegativeTest() {   //дает поставить числовое значение в фамилию
         given()
                 .log()
@@ -191,6 +211,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные дат - дата выезда раньше даты заселения")
     void updateBookingCheckoutNegativeTest() {  //дает поставить дату выезда раньше, чем дата заезда
         given()
                 .log()
@@ -208,6 +230,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные дат - дата заселения раньше даты выезда")
     void updateBookingCheckinNegativeTest() {   //дает поставить дату заезда позже, чем дата выезда
         given()
                 .log()
@@ -225,6 +249,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - позитив")
+    @Step("Изменили данные депозита")
     void updateBookingdepositpaidPositiveTest() {
         given()
                 .log()
@@ -242,6 +268,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные депозита на null")
     void updateBookingdepositpaidNegativeTest() {  // дает подставить null  в депозит
         given()
                 .log()
@@ -258,6 +286,8 @@ public class partialUpdateBookingTests extends BaseTest {
 
     }
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные цены на отрицательное значение")
     void updateBookingTotalpriceNegativeTest() {  //дает подставить отрицательное значение
         given()
                 .log()
@@ -275,6 +305,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - позитив")
+    @Step("Изменили данные имени и фамилии")
     void updateBookingNamesOutPositiveTest() {
         given()
                 .log()
@@ -292,6 +324,8 @@ public class partialUpdateBookingTests extends BaseTest {
     }
 
     @Test
+    @Description("Изменение бронирования - негатив")
+    @Step("Изменили данные даты")
     void updateBookingCheckoutWithChekinNegativeTest() {  //дает поставить дату выезда раньше, чем дата заезда
         given()
                 .log()
