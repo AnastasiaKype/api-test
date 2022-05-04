@@ -1,9 +1,10 @@
 package ru.anastasiakype;
 
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,29 +15,20 @@ import ru.anastasiakype.dao.CreateTokenRequest;
 import ru.anastasiakype.dao.CreateTokenResponse;
 import ru.anastasiakype.dao.createAccountRequest;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
 import static ru.anastasiakype.deleteBookingTests.faker;
 import static ru.anastasiakype.deleteBookingTests.formater;
+
+
+@Severity(SeverityLevel.NORMAL)
 
 public class partialUpdateBookingTests extends BaseTest {
     static String token;
     String id;
-
-    private static CreateTokenRequest request;
-    private static CreateTokenResponse tokenResponse;
-    private static createAccountRequest accountRequest;
-    private static BookingdatesRequest bookingdatesRequest;
-    private static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
-
 
     @BeforeAll
     static void beforeAll() throws IOException {
