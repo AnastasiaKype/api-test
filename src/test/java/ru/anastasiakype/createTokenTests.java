@@ -1,6 +1,8 @@
 package ru.anastasiakype;
 
+import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Step;
 import io.qameta.allure.Story;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -37,6 +39,8 @@ public class createTokenTests extends BaseTest {
     }
 
     @Test
+    @Description("Регистрируем токен - позитив")
+    @Step("Регистрация токена с правильными данными")
     void createTokenPositiveTest() {
         given()
                 .log()
@@ -56,6 +60,8 @@ public class createTokenTests extends BaseTest {
     }
 
     @Test
+    @Description("Регистрируем токен - негатив")
+    @Step("Регистрация токена с неправильными данными")
     void createTokenNegativePasswordTest() {
         given() //предусловия, подготовка
                 .log()
@@ -75,6 +81,8 @@ public class createTokenTests extends BaseTest {
     }
 
     @Test
+    @Description("Регистрируем токен - негатив")
+    @Step("Регистрация токена с неправильными данными")
     void createTokenWithAWrongUsernameAndPasswordNegativeTest() {
         Response response = given()
                 .log()
