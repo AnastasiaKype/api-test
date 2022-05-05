@@ -20,17 +20,24 @@ public abstract class BaseTest {
     protected static CreateTokenResponse tokenResponse;
     protected static createAccountRequest accountRequest;
     protected static BookingdatesRequest bookingdatesRequest;
-    protected static final String PROPERTIES_FILE_PATH = "src/test/resources/application.properties";
+    private static String PROPERTIES_FILE_PATH = "src/test/application.properties";
+    static private String baseUrl;
 
 
+    static Properties properties = new Properties();
+    protected static Faker faker = new Faker();
+    protected String id;
 
-    protected static Properties properties = new Properties();
+
     @BeforeAll
     @Step("Data preparation")
-    static void beforeAll() throws IOException {
+    static void beforeAllTests() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.filters(new AllureRestAssured());
+
+
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
+        RestAssured.baseURI = properties.getProperty("base.url");
 
 
     }

@@ -6,11 +6,13 @@ import io.qameta.allure.SeverityLevel;
 import io.qameta.allure.Story;
 import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.anastasiakype.dao.BookingdatesRequest;
 import ru.anastasiakype.dao.CreateTokenRequest;
+import ru.anastasiakype.dao.CreateTokenResponse;
 import ru.anastasiakype.dao.createAccountRequest;
 import com.github.javafaker.Faker;
 
@@ -23,6 +25,7 @@ import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @Severity(SeverityLevel.BLOCKER)
@@ -35,16 +38,13 @@ public class deleteBookingTests extends BaseTest{
     private static CreateTokenRequest request;
     private static createAccountRequest accountRequest;
     private static BookingdatesRequest bookingdatesRequest;
-    static Faker faker = new Faker();
-
 
 
     static SimpleDateFormat formater = new SimpleDateFormat("dd-MM-yyyy");
 
-    static String token;
-    String id;
     @BeforeAll
     static void beforeAll() throws IOException {
+
 
 
         request = CreateTokenRequest.builder()
@@ -68,21 +68,21 @@ public class deleteBookingTests extends BaseTest{
 
 
 
-        token = given()
+        tokenResponse = given()
                 .log()
                 .all()
                 .header("Content-Type", "application/json")
                 .body(request)
                 .expect()
                 .statusCode(200)
-                .body("token", is(CoreMatchers.not(nullValue())))
                 .when()
-                .post("/auth")
+                .post("auth")
                 .prettyPeek()
-                .body()
-                .jsonPath()
-                .get("token")
-                .toString();
+                .then()
+                .extract()
+                .as(CreateTokenResponse.class);
+        assertThat(tokenResponse.getToken().length(), IsEqual.equalTo(15));
+
     }
 
     @BeforeEach
@@ -109,9 +109,9 @@ public class deleteBookingTests extends BaseTest{
         given()
                 .log()
                 .all()
-                .header("Cookie", "token=" + token)
+                .header("Cookie", "token=" + tokenResponse.getToken())
                 .when()
-                .delete("/booking/" + id)
+                .delete("booking/" + id)
                 .prettyPeek()
                 .then()
                 .statusCode(201);
@@ -122,7 +122,7 @@ public class deleteBookingTests extends BaseTest{
         given()
                 .log()
                 .all()
-                .header("Cookie", "token=" + token + 1)
+                .header("Cookie", "token=" + tokenResponse + 1)
                 .when()
                 .delete("/booking/" + id)
                 .prettyPeek()
