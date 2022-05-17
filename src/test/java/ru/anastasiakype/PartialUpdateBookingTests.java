@@ -6,12 +6,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.anastasiakype.dao.BookingdatesRequest;
+import ru.anastasiakype.dao.BookingDatesRequest;
 import ru.anastasiakype.dao.CreateTokenRequest;
-import ru.anastasiakype.dao.createAccountRequest;
+import ru.anastasiakype.dao.CreateAccountRequest;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -19,20 +18,20 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
-import static ru.anastasiakype.deleteBookingTests.faker;
-import static ru.anastasiakype.deleteBookingTests.formater;
+import static ru.anastasiakype.DeleteBookingTests.faker;
+import static ru.anastasiakype.DeleteBookingTests.formater;
 
-public class partialUpdateBookingTests {
+public class PartialUpdateBookingTests {
     static String token;
     String id;
     private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
     private static CreateTokenRequest request;
     static Properties properties = new Properties();
-    private static createAccountRequest accountRequest;
-    private static BookingdatesRequest bookingdatesRequest;
+    private static CreateAccountRequest accountRequest;
+    private static BookingDatesRequest bookingdatesRequest;
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void BeforeAll() throws IOException {
         request = CreateTokenRequest.builder()
                 .username("admin")
                 .password("password123")
@@ -41,11 +40,11 @@ public class partialUpdateBookingTests {
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
         RestAssured.baseURI = properties.getProperty("base.url");
 
-        bookingdatesRequest = BookingdatesRequest.builder()
+        bookingdatesRequest = BookingDatesRequest.builder()
                 .checkin(formater.format(faker.date().birthday().getDate()))
                 .checkout(formater.format(faker.date().birthday().getDate()))
                 .build();
-        accountRequest = createAccountRequest.builder()
+        accountRequest = CreateAccountRequest.builder()
                 .firstname(faker.name().fullName())
                 .lastname(faker.name().lastName())
                 .totalprice(faker.hashCode())
@@ -72,7 +71,7 @@ public class partialUpdateBookingTests {
     }
 
     @BeforeEach
-    void setUp() {
+    void SetUp() {
 
         id = given()
                 .log()
@@ -91,7 +90,7 @@ public class partialUpdateBookingTests {
     }
 
     @AfterEach
-    void tearDown() {
+    void TearDown() {
         given()
                 .log()
                 .method()
@@ -108,7 +107,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingPositiveTest() {
+    void UpdateBookingPositiveTest() {
         given()
                 .log()
                 .all()
@@ -126,7 +125,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingFirstnamePositiveTest() {
+    void UpdateBookingFirstnamePositiveTest() {
         given()
                 .log()
                 .all()
@@ -142,7 +141,7 @@ public class partialUpdateBookingTests {
                 .body("firstname", equalTo("ava"));
     }
     @Test
-    void updateBookingFirstnameNegativeTest() {  //дает поставить числовое значение в имя
+    void UpdateBookingFirstnameNegativeTest() {  //дает поставить числовое значение в имя
         given()
                 .log()
                 .all()
@@ -160,7 +159,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingLastnamePositiveTest() {
+    void UpdateBookingLastnamePositiveTest() {
         given()
                 .log()
                 .all()
@@ -177,7 +176,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingLastnameNegativeTest() {   //дает поставить числовое значение в фамилию
+    void UpdateBookingLastnameNegativeTest() {   //дает поставить числовое значение в фамилию
         given()
                 .log()
                 .all()
@@ -194,7 +193,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingCheckoutNegativeTest() {  //дает поставить дату выезда раньше, чем дата заезда
+    void UpdateBookingCheckoutNegativeTest() {  //дает поставить дату выезда раньше, чем дата заезда
         given()
                 .log()
                 .all()
@@ -211,7 +210,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingCheckinNegativeTest() {   //дает поставить дату заезда позже, чем дата выезда
+    void UpdateBookingCheckinNegativeTest() {   //дает поставить дату заезда позже, чем дата выезда
         given()
                 .log()
                 .all()
@@ -228,7 +227,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingdepositpaidPositiveTest() {
+    void UpdateBookingdepositpaidPositiveTest() {
         given()
                 .log()
                 .all()
@@ -245,7 +244,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingdepositpaidNegativeTest() {  // дает подставить null  в депозит
+    void UpdateBookingdepositpaidNegativeTest() {  // дает подставить null  в депозит
         given()
                 .log()
                 .all()
@@ -261,7 +260,7 @@ public class partialUpdateBookingTests {
 
     }
     @Test
-    void updateBookingTotalpriceNegativeTest() {  //дает подставить отрицательное значение
+    void UpdateBookingTotalpriceNegativeTest() {  //дает подставить отрицательное значение
         given()
                 .log()
                 .all()
@@ -278,7 +277,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingNamesOutPositiveTest() {
+    void UpdateBookingNamesOutPositiveTest() {
         given()
                 .log()
                 .all()
@@ -295,7 +294,7 @@ public class partialUpdateBookingTests {
     }
 
     @Test
-    void updateBookingCheckoutWithChekinNegativeTest() {  //дает поставить дату выезда раньше, чем дата заезда
+    void UpdateBookingCheckoutWithChekinNegativeTest() {  //дает поставить дату выезда раньше, чем дата заезда
         given()
                 .log()
                 .all()

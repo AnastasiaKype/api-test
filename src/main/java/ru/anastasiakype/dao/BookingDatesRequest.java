@@ -11,11 +11,11 @@ import lombok.With;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 @With
+@Setter
+@Getter
+public class BookingDatesRequest {
 
-public class BookingdatesRequest {
 
-        @Setter
-        @Getter
 
         @JsonProperty("checkin")
         public String checkin;

@@ -5,16 +5,16 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.anastasiakype.dao.BookingdatesRequest;
+import ru.anastasiakype.dao.BookingDatesRequest;
+import ru.anastasiakype.dao.CreateAccountRequest;
 import ru.anastasiakype.dao.CreateTokenRequest;
-import ru.anastasiakype.dao.createAccountRequest;
+import ru.anastasiakype.dao.CreateAccountRequest;
 import com.github.javafaker.Faker;
 
 import java.io.FileInputStream;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
@@ -23,13 +23,13 @@ import static org.hamcrest.core.Is.is;
 
 
 
-public class deleteBookingTests {
+public class DeleteBookingTests {
 
     private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
     static Properties properties = new Properties();
     private static CreateTokenRequest request;
-    private static createAccountRequest accountRequest;
-    private static BookingdatesRequest bookingdatesRequest;
+    private static CreateAccountRequest accountRequest;
+    private static BookingDatesRequest bookingdatesRequest;
     static Faker faker = new Faker();
 
 
@@ -39,7 +39,7 @@ public class deleteBookingTests {
     static String token;
     String id;
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void BeforeAll() throws IOException {
 
         properties.load(new FileInputStream(PROPERTIES_FILE_PATH));
         RestAssured.baseURI = properties.getProperty("base.url");
@@ -51,11 +51,11 @@ public class deleteBookingTests {
                     .password("password123")
                     .build();
 
-        bookingdatesRequest = BookingdatesRequest.builder()
+        bookingdatesRequest = BookingDatesRequest.builder()
                 .checkin(formater.format(faker.date().birthday().getDate()))
                 .checkout(formater.format(faker.date().birthday().getDate()))
                 .build();
-        accountRequest = createAccountRequest.builder()
+        accountRequest = CreateAccountRequest.builder()
                 .firstname(faker.name().fullName())
                 .lastname(faker.name().lastName())
                 .totalprice(faker.hashCode())
@@ -85,7 +85,7 @@ public class deleteBookingTests {
     }
 
     @BeforeEach
-    void setUp() {
+    void SetUp() {
 
         id = given()
                 .log()
@@ -104,7 +104,7 @@ public class deleteBookingTests {
     }
 
     @Test
-    void deleteTokenPositiveTest() {
+    void DeleteTokenPositiveTest() {
         given()
                 .log()
                 .all()
@@ -117,7 +117,7 @@ public class deleteBookingTests {
     }
 
     @Test
-    void deleteTokenNegativeTest() {
+    void DeleteTokenNegativeTest() {
         given()
                 .log()
                 .all()
@@ -130,11 +130,11 @@ public class deleteBookingTests {
     }
 
     @Test
-    void deleteBookingAuthorizationPositiveTest() {
+    void DeleteBookingAuthorizationPositiveTest() {
         given()
                 .log()
                 .all()
-                .header("Authorization", "Basic b3b8e87abd2cf25")
+                .header("Authorization", "token")
                 .when()
                 .delete("/booking/" + id)
                 .prettyPeek()

@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 
-public class createTokenTests {
+public class CreateTokenTests {
 
 
     private static final String PROPERTIES_FILE_PATH = "src/test/application.properties";
@@ -27,7 +27,7 @@ public class createTokenTests {
     static private String baseUrl;
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void BeforeAll() throws IOException {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         request = CreateTokenRequest.builder()
@@ -40,7 +40,7 @@ public class createTokenTests {
     }
 
     @Test
-    void createTokenPositiveTest() {
+    void CreateTokenPositiveTest() {
         given()
                 .log()
                 .method()
@@ -59,7 +59,7 @@ public class createTokenTests {
     }
 
     @Test
-    void createTokenNegativePasswordTest() {
+    void CreateTokenNegativePasswordTest() {
         given() //предусловия, подготовка
                 .log()
                 .method()
@@ -78,7 +78,7 @@ public class createTokenTests {
     }
 
     @Test
-    void createTokenWithAWrongUsernameAndPasswordNegativeTest() {
+    void CreateTokenWithAWrongUsernameAndPasswordNegativeTest() {
         Response response = given()
                 .log()
                 .method()

@@ -10,10 +10,10 @@ import lombok.With;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 @With
+@Setter
+@Getter
+public class CreateAccountRequest {
 
-public class createAccountRequest {
-    @Setter
-    @Getter
 
     @JsonProperty("firstname")
     private String firstname;
@@ -25,7 +25,7 @@ public class createAccountRequest {
     @JsonProperty("depositpaid")
     private Boolean depositpaid;
     @JsonProperty("bookingdates")
-    private BookingdatesRequest bookingdates;
+    private BookingDatesRequest bookingdates;
     @JsonProperty("additionalneeds")
     private String additionalneeds;
 
